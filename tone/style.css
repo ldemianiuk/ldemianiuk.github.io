@@ -2,7 +2,7 @@
 }
 
 #metronome {
-    background: url('/metronome.png');
+    background: url('metronome.png');
     color: red;
     font-size: 4em;
     font-family: courier;
