@@ -12,7 +12,17 @@
 </head>
 <body>
     <button id="play" onmousedown="play()">Play</button>
-    <input type="range" min="100" max="250" value="150" id="bpm" onchange="bpmChange(this.value)">
+    <br>
     <div id="metronome" frame="0">1</div>
+
+<div>
+    <div class="instruments">
+    BPM <input type="range" min="100" max="250" value="150" id="bpm" onchange="bpmChange(this.value)"> <br>
+    Metronome <input type="checkbox" onchange="onoff (metronome, this.checked)"> <br>
+    Clave <input type="checkbox" checked onchange="onoff (clave, this.checked)"> <br>
+    Conga slap <input type="checkbox" checked onchange="onoff (conga_slap, this.checked)"> <br>
+    Conga open<input type="checkbox" checked onchange="onoff (conga_open, this.checked)"> <br>
+    </div>
+</div>
 </body>
 </html>
