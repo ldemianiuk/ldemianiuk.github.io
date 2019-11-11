@@ -51,3 +51,10 @@
     width: 20em;
     text-align: right;
 }
+
+span[on="false"] {
+    background: white;
+}
+span[on="true"] {
+    background: salmon;
+}
