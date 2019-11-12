@@ -56,8 +56,11 @@ function setup() {
 
     let counter = new Tone.Sequence(function(time, count){
         document.getElementById('metronome').innerHTML = count;
-    }, ['1', '2', '3', '4', '5', '6', '7', '8'], '4n');
+    }, ['1', '1&', '2', '2&', '3', '3&', '4', '4&', '5', '5&', '6', '6&', '7', '7&', '8', '8&'], '8n');
     counter.start(0);
+
+    onSamplesLoaded(() =>
+        document.getElementById('overlay').style.display = 'none');
 }
 
 
@@ -70,16 +73,13 @@ function play() {
     if (Tone.context.state !== 'running') {
         Tone.context.resume();
     }
-
-    onSamplesLoaded(() => {
-        if (Tone.Transport.state == 'stopped') {
-            Tone.Transport.start();
-            document.getElementById('play').innerHTML = 'Stop';
-        } else {
-            Tone.Transport.stop();
-            document.getElementById('play').innerHTML = 'Play';
-        }
-    });
+    if (Tone.Transport.state == 'stopped') {
+        Tone.Transport.start();
+        document.getElementById('play').innerHTML = 'Stop';
+    } else {
+        Tone.Transport.stop();
+        document.getElementById('play').innerHTML = 'Play';
+    }
 }
 
 function bpmChange (val) {
@@ -110,10 +110,13 @@ function instrument(name, samples, pattern) {
     });
 
     instr$.subscribe(function animate([time, note]) {
-        document.getElementById(name + '_cb').setAttribute("on", note !== 0);
-        setTimeout(() => {
-            document.getElementById(name + '_cb').setAttribute("on", "false");
-        }, 100);
+        let label = document.getElementById(name + '_cb')
+        if(label) {
+            label.setAttribute("on", note !== 0);
+            setTimeout(() => {
+                label.setAttribute("on", "false");
+            }, 100);
+        }
     });
 
     instr.observable = instr$;

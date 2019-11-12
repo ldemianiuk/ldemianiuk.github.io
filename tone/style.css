@@ -58,3 +58,12 @@ span[on="false"] {
 span[on="true"] {
     background: salmon;
 }
+
+#overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: url('loading.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+}
