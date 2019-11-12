@@ -46,7 +46,7 @@ function setup() {
     counting.volume.value = -10;
 
     piano = instrument('piano', {'C4': 'piano.ogg'},
-        ["C3", ["E3 G3", "F3"], [0, "A3 C4"], 0]);
+        ["C3", ["E3 G3", "F3"], [0, "A3 C4"], [0, "G3"], [0, "B3 D4"], [0, "F3"], [0, "A3 C4"], [0, "C3"]]);
     piano.volume.value = -5;
 
     let anim = new Tone.Sequence(function(time, frame) {
@@ -105,7 +105,7 @@ function instrument(name, samples, pattern) {
     instr$.subscribe(function play([time, note]) {
         if (note) {
             for (let n of note.split(' '))
-                instr.triggerAttackRelease(n, '2n', time);
+                instr.triggerAttackRelease(n, '4n', time);
         }
     });
 
@@ -124,3 +124,5 @@ function instrument(name, samples, pattern) {
     return instr;
 }
 
+
+const notes = ['C3', 'C#3', 'D3', 'D#3', 'E3', 'F3', 'F#3', 'G3', 'G#3', 'A3', 'A#3', 'B3', 'C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4'];
