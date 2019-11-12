@@ -18,11 +18,13 @@
 
 <div>
     <div class="instruments">
-    Tempo <input type="range" min="100" max="250" value="150" id="bpm" onchange="bpmChange(this.value)"> <br>
-    Metronome <input type="checkbox" onchange="onoff (metronome, this.checked)"><br>
+    Tempo <input type="range" min="100" max="240" value="150" id="bpm" onchange="bpmChange(this.value)"> <br>
+        <span id="metronome_cb" on="false">Metronome </span><input type="checkbox" onchange="onoff (metronome, this.checked)"><br>
         <span id="clave_cb" on="false">Clave </span><input type="checkbox" checked onchange="onoff (clave, this.checked)"> <br>
         <span id="conga_slap_cb" on="false">Conga slap </span><input type="checkbox" checked onchange="onoff (conga_slap, this.checked)"> <br>
         <span id="conga_open_cb" on="false">Conga open </span><input type="checkbox" checked onchange="onoff (conga_open, this.checked)"> <br>
+        <span id="counting_cb" on="false">Counting  </span><input type="checkbox" checked onchange="onoff (counting, this.checked)"> <br>
+        <span id="piano_cb" on="false">Piano  </span><input type="checkbox" checked onchange="onoff (piano, this.checked)"> <br>
     </div>
 </div>
 </div>

@@ -1,7 +1,10 @@
+let loading = 0;
 let clave;
 let conga_slap;
 let conga_open;
 let metronome;
+let counting;
+let piano;
 
 window.onload = setup;
 
@@ -13,36 +16,54 @@ function onoff(synth, val) {
 function setup() {
     Tone.Transport.bpm.value = 150;
 
-    clave = instrument('clave.ogg', 'C4',
-        ["C4", 0, 0, "C4", 0, 0, 0, "C4",
-            0, 0, "C4", 0, "C4", 0, 0, 0]);
+    clave = instrument('clave',{'C4': 'clave.ogg'},
+        [0, "C4", "C4", 0,
+            "C4", [0, "C4"], 0, "C4"]);
 
-    conga_slap = instrument('conga_slap.ogg', 'G3',
-        [0, 0, "C4", 0, 0, 0, 0, 0]);
+    conga_slap = instrument('conga_slap', {'G3': 'conga_slap.ogg'},
+        [0, "C4", 0, 0]);
+    conga_slap.volume.value = 3;
 
-    conga_open = instrument('conga_open.ogg', 'C4',
-        [0, 0, 0, 0, 0, 0, "C4", "C4",
-            0, 0, 0, "C3", "C3", 0, "C4", "C4"]);
+    let slap2 = instrument('conga_something', {'G3': 'conga_slap.ogg'},
+        [["C4", "C4"]]);
+    slap2.volume.value = -10;
+
+    conga_open = instrument('conga_open', {'C4': 'conga_open.ogg'},
+        [0, 0, 0, ["C4", "C4"],
+            0, [0, "C3"], "C3", ["C4", "C4"]]);
     conga_open.volume.value = -5;
 
-    metronome = new Tone.Sampler({'C4': 'metronome.ogg'}, function() {
-        let pattern2 = new Tone.Sequence(function(time, note){
-            if (note) metronome.triggerAttackRelease(note, '256n', time);
-        }, ["C3", "C4", "C3", "C4"], '8n');
-
-        pattern2.start(0);
-    });
+    metronome = instrument('metronome', {'C4': 'metronome.ogg'},
+        ["C3", "C4", "C3", "C4"]);
     metronome.volume.value = -15;
+    metronome.disconnect();
+
+    counting = instrument('counting',
+        {'C3': 'one.ogg', 'D3': 'two.ogg', 'E3': 'three.ogg', 'F3': 'four.ogg',
+            'G3': 'five.ogg', 'A3': 'six.ogg', 'B3': 'seven.ogg', 'C4': 'eight.ogg'},
+        ["C3", "D3", "E3", "F3",
+            "G3", "A3", "B3", "C4"]);
+    counting.volume.value = -10;
+
+    piano = instrument('piano', {'C4': 'piano.ogg'},
+        ["C3", ["E3 G3", "F3"], [0, "A3 C4"], 0]);
+    piano.volume.value = -5;
 
     let anim = new Tone.Sequence(function(time, frame) {
         document.getElementById('metronome').setAttribute('frame', frame);
     }, [...Array(12).keys(), ...[...Array(12).keys()].reverse()], '48n');
     anim.start(0);
 
-    let counting = new Tone.Sequence(function(time, count){
+    let counter = new Tone.Sequence(function(time, count){
         document.getElementById('metronome').innerHTML = count;
     }, ['1', '2', '3', '4', '5', '6', '7', '8'], '4n');
-    counting.start(0);
+    counter.start(0);
+}
+
+
+function onSamplesLoaded(fn) {
+    if(loading == 0) fn();
+    else setTimeout(() => onSamplesLoaded(fn), 100);
 }
 
 function play() {
@@ -50,14 +71,15 @@ function play() {
         Tone.context.resume();
     }
 
-    if(Tone.Transport.state == 'stopped') {
-        Tone.Transport.start();
-        document.getElementById('play').innerHTML = 'Stop';
-    }
-    else {
-        Tone.Transport.stop();
-        document.getElementById('play').innerHTML = 'Play';
-    }
+    onSamplesLoaded(() => {
+        if (Tone.Transport.state == 'stopped') {
+            Tone.Transport.start();
+            document.getElementById('play').innerHTML = 'Stop';
+        } else {
+            Tone.Transport.stop();
+            document.getElementById('play').innerHTML = 'Play';
+        }
+    });
 }
 
 function bpmChange (val) {
@@ -66,14 +88,36 @@ function bpmChange (val) {
 
 
 
-function instrument(sample, sampleNote, pattern) {
-    let instr = new Tone.Sampler({[sampleNote]: sample}, function() {
-        let tonePattern = new Tone.Sequence(function(time, note){
-            if (note) instr.triggerAttackRelease(note, '4n', time);
-            document.getElementById(sample.replace('.ogg', '_cb')).setAttribute("on", note !== 0);
-        }, pattern, '8n');
-
+function instrument(name, samples, pattern) {
+    loading++;
+    let instr$;
+    let tonePattern;
+    let instr = new Tone.Sampler(samples, () => loading--).toMaster();
+    instr$ = Rx.Observable.create(observer => {
+        tonePattern = new Tone.Sequence((time, note) => {
+            observer.next([time, note]);
+        }, pattern, '4n');
         tonePattern.start(0);
-    }).toMaster();
+    }).publish();
+    instr$.connect();
+
+
+    instr$.subscribe(function play([time, note]) {
+        if (note) {
+            for (let n of note.split(' '))
+                instr.triggerAttackRelease(n, '2n', time);
+        }
+    });
+
+    instr$.subscribe(function animate([time, note]) {
+        document.getElementById(name + '_cb').setAttribute("on", note !== 0);
+        setTimeout(() => {
+            document.getElementById(name + '_cb').setAttribute("on", "false");
+        }, 100);
+    });
+
+    instr.observable = instr$;
+
     return instr;
 }
+
