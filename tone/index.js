@@ -27,6 +27,7 @@ function setup() {
     let slap2 = instrument('conga_something', {'G3': 'conga_slap.ogg'},
         [["C4", "C4"]]);
     slap2.volume.value = -10;
+    slap2.disconnect();
 
     conga_open = instrument('conga_open', {'C4': 'conga_open.ogg'},
         [0, 0, 0, ["C4", "C4"],
