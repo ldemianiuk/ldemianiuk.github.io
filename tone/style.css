@@ -53,9 +53,11 @@
 }
 
 span[on="false"] {
+    font-size: 150%;
     background: white;
 }
 span[on="true"] {
+    font-size: 150%;
     background: salmon;
 }
 

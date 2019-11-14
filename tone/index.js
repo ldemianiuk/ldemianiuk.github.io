@@ -5,50 +5,69 @@ let conga_open;
 let metronome;
 let counting;
 let piano;
+let bass;
 
-window.onload = setup;
+window.onload = function () {
+    setup();
+    let sel = document.getElementById('clave_se');
+    for (i in clave.patterns) {
+        let option = document.createElement('option');
+        option.text = i;
+        sel.add(option);
+    }
+};
+
+function claveChange(val) {
+    Tone.Transport.stop();
+    clave.sequence.removeAll();
+    clave.patterns[val].map((p, i) => clave.sequence.add(i, p));
+    // clave.patterns[val].map((p, i) => console.log(`${i}, ${p}`));
+    Tone.Transport.start();
+}
 
 function onoff(synth, val) {
-    if (val) synth.toMaster();
-    else synth.disconnect();
+    if (val) synth.instrument.toMaster();
+    else synth.instrument.disconnect();
 }
 
 function setup() {
-    Tone.Transport.bpm.value = 150;
+    Tone.Transport.bpm.value = 180;
 
     clave = instrument('clave',{'C4': 'clave.ogg'},
-        [0, "C4", "C4", 0,
-            "C4", [0, "C4"], 0, "C4"]);
+        {'Son 2/3': [0, "C4", "C4", 0, "C4", [0, "C4"], 0, "C4"],
+            'Son 3/2': ["C4", [0, "C4"], 0, "C4", 0, "C4", "C4", 0],
+            'Rumba 3/2': ["C4", [0, "C4"], 0, [0, "C4"], 0, "C4", "C4", 0],
+            'Rumba 2/3': [0, "C4", "C4", 0, "C4", [0, "C4"], 0, [0, "C4"]]
+        }, 'Son 2/3');
 
     conga_slap = instrument('conga_slap', {'G3': 'conga_slap.ogg'},
         [0, "C4", 0, 0]);
-    conga_slap.volume.value = 3;
-
-    let slap2 = instrument('conga_something', {'G3': 'conga_slap.ogg'},
-        [["C4", "C4"]]);
-    slap2.volume.value = -10;
-    slap2.disconnect();
+    conga_slap.instrument.volume.value = 3;
 
     conga_open = instrument('conga_open', {'C4': 'conga_open.ogg'},
         [0, 0, 0, ["C4", "C4"],
             0, [0, "C3"], "C3", ["C4", "C4"]]);
-    conga_open.volume.value = -5;
+    conga_open.instrument.volume.value = -5;
 
     metronome = instrument('metronome', {'C4': 'metronome.ogg'},
         ["C3", "C4", "C3", "C4"]);
-    metronome.volume.value = -15;
-    metronome.disconnect();
+    metronome.instrument.volume.value = -15;
+    metronome.instrument.disconnect();
 
     counting = instrument('counting',
         {'C3': 'one.ogg', 'D3': 'two.ogg', 'E3': 'three.ogg', 'F3': 'four.ogg',
             'G3': 'five.ogg', 'A3': 'six.ogg', 'B3': 'seven.ogg', 'C4': 'eight.ogg'},
         ["C3", "D3", "E3", "F3",
             "G3", "A3", "B3", "C4"]);
-    counting.volume.value = -10;
+    counting.instrument.volume.value = -10;
 
     piano = instrument('piano', {'C4': 'piano.ogg'},
         ["C3", ["E3 G3", "F3"], [0, "A3 C4"], [0, "G3"], [0, "B3 D4"], [0, "F3"], [0, "A3 C4"], [0, "C3"]]);
-    piano.volume.value = -5;
+    piano.instrument.volume.value = -5;
+
+    bass = instrument('bass', {'B3': 'bass.ogg'},
+        [0, [0, "F2"], 0, "G2", 0, [0, "F2"], 0, "C2"]);
+    bass.instrument.volume.value = 3;
 
     let anim = new Tone.Sequence(function(time, frame) {
         document.getElementById('metronome').setAttribute('frame', frame);
@@ -84,21 +103,29 @@ function play() {
 }
 
 function bpmChange (val) {
+    Tone.Transport.stop();
     Tone.Transport.bpm.value = val;
+    Tone.Transport.start();
+}
+
+function volumeChange (val) {
+    Tone.Master.volume.value = - (((val-100)/10)**2);
 }
 
 
-
-function instrument(name, samples, pattern) {
+function instrument(name, samples, patterns, defaultPattern = undefined) {
     loading++;
+    let result = {};
     let instr$;
-    let tonePattern;
+    let sequence;
+    let pattern = Array.isArray(patterns) ? patterns : patterns[defaultPattern];
     let instr = new Tone.Sampler(samples, () => loading--).toMaster();
     instr$ = Rx.Observable.create(observer => {
-        tonePattern = new Tone.Sequence((time, note) => {
+        sequence = new Tone.Sequence((time, note) => {
             observer.next([time, note]);
         }, pattern, '4n');
-        tonePattern.start(0);
+        sequence.start(0);
+        result.sequence = sequence;
     }).publish();
     instr$.connect();
 
@@ -120,9 +147,10 @@ function instrument(name, samples, pattern) {
         }
     });
 
-    instr.observable = instr$;
-
-    return instr;
+    result.observable = instr$;
+    result.instrument = instr;
+    result.patterns = patterns;
+    return result;
 }
 
 
