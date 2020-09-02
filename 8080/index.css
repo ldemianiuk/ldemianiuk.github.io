@@ -1,0 +1,66 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+}
+
+ul#code {
+    font-family: 'Courier New', Courier, monospace;
+    list-style: none;
+    border-style: solid;
+    padding: 10px;
+    width: 12em;
+    font-weight: bold;;
+}
+
+ul#code li.current {
+    border-style: solid;
+    border-width: 1px;
+    background-color: cornsilk;
+}
+
+ul#code li span {
+    display: inline-block;
+    padding: 5px;
+}
+
+.address {
+    font-weight: normal;
+}
+
+table#registers {
+    margin-left: 10px;
+    border-style: solid;
+    font-family: 'Courier New', Courier, monospace;
+    border-collapse: collapse;
+}
+
+table#registers th,td {
+    border-left-style: solid;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+table#registers th {
+}
+
+ul#stack {
+    font-family: 'Courier New', Courier, monospace;
+    list-style: none;
+    border-style: solid;
+    width: 10em;
+    margin-left: 10px;
+}
+
+div#memory {
+    border-style: solid;
+    margin-left: 10px;
+    font-size: 150%;
+    padding: 10px;
+    letter-spacing: 0.2em;
+}
+
+
