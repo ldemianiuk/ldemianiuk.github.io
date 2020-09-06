@@ -70,3 +70,8 @@ div#flags {
     border-style: solid;
     padding: 10px;
 }
+
+div#cycles {
+    font-size: 200%;
+    border-style: solid;
+}

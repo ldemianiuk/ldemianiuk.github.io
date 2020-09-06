@@ -850,6 +850,7 @@ function refreshui() {
         Array.from(Array(16).keys()).map(i => ('0000' + (page * 0x100 + i * 16).toString(16).toUpperCase()).slice(-4) + ' ' + Array.from(Array(16).keys()).map(j => displayChar(emulator.memory[page * 0x100 + i * 16 + j])).join('')).join('<br>');
     document.getElementById('flags').innerHTML = "S:" + (+emulator.status.S) + " Z:" + (+emulator.status.Z) + " A:" + (+emulator.status.A) + " P:" + (+emulator.status.P) + " C:" + (+emulator.status.C);
     //JSON.stringify(emulator.status).replace(/["{}]/g,'').replace(/,/g,' ');
+    document.getElementById('cycles').innerHTML = emulator.cycles.toString();
 }
 function displayChar(ch) {
     const str = String.fromCharCode(ch);

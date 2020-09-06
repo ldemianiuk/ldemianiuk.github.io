@@ -13,7 +13,7 @@
     <button onclick="run()">RUN</button>
     <button onclick="cpudiag()">RESET</button>
     <!-- <button onclick="selectProgram()">RESET</button> -->
-<!--     Program:
+    <!--     Program:
     <select name="program" id="program" onchange="selectProgram()">
         <option value="0">hello</option>
         <option value="1">memcpy</option>
@@ -30,35 +30,39 @@
             </div>
             <div style="display: flex; flex-direction: row;">
                 <div>
-            <h2>Registers</h2>
-            <table id="registers">
-                <tr>
-                    <th>B</th>
-                    <th>C</th>
-                    <th>D</th>
-                    <th>E</th>
-                    <th>H</th>
-                    <th>L</th>
-                    <th>M</th>
-                    <th>A</th>
-                </tr>
-                <tr id="register-values">
-                    <td>00</td>
-                    <td>00</td>
-                    <td>00</td>
-                    <td>00</td>
-                    <td>00</td>
-                    <td>00</td>
-                    <td>00</td>
-                    <td>00</td>
-                </tr>
-            </table>
-        </div>
-            <div style="margin-left: 20px">
-                <h2>Flags</h2>
-                <div id='flags'>asdf</div>
+                    <h2>Registers</h2>
+                    <table id="registers">
+                        <tr>
+                            <th>B</th>
+                            <th>C</th>
+                            <th>D</th>
+                            <th>E</th>
+                            <th>H</th>
+                            <th>L</th>
+                            <th>M</th>
+                            <th>A</th>
+                        </tr>
+                        <tr id="register-values">
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                            <td>00</td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="margin-left: 20px">
+                    <h2>Flags</h2>
+                    <div id='flags'></div>
+                </div>
+                <div style="margin-left: 20px">
+                    <h2>Cycles</h2>
+                    <div id='cycles'>0</div>
+                </div>
             </div>
-        </div>
 
             <div style="display: flex; flex-direction: row;">
 
