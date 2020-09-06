@@ -44,8 +44,6 @@ table#registers th,td {
     padding-right: 10px;
 }
 
-table#registers th {
-}
 
 ul#stack {
     font-family: 'Courier New', Courier, monospace;
@@ -63,4 +61,12 @@ div#memory {
     letter-spacing: 0.2em;
 }
 
+div#output {
+    border-style: solid;
+    min-height: 1em;
+}
 
+div#flags {
+    border-style: solid;
+    padding: 10px;
+}
