@@ -294,7 +294,7 @@ class e8080 {
                 this.status.C = false;
                 this.status.A = false; // undocumented
             },
-            "CALL": (opcode, lo, hi) => { this.call(hi, lo); },
+            "CALL": (opcode, lo, hi) => { this.call(hi, lo, 0); },
             "CC": (opcode, lo, hi) => { if (this.status.C)
                 this.call(hi, lo); },
             "CM": (opcode, lo, hi) => { if (this.status.S)
@@ -509,7 +509,7 @@ class e8080 {
             },
             "RC": op => { if (this.status.C)
                 this.ret(); },
-            "RET": op => { this.ret(); },
+            "RET": op => { this.ret(0); },
             "RLC": op => {
                 const a = this.getReg(A);
                 this.status.C = (a & 0b10000000) !== 0;
@@ -610,9 +610,10 @@ class e8080 {
         this.pc = new Uint16Array(1);
         this.reset();
     }
-    ret() {
+    ret(addcycles = 6) {
         this.pc[0] = WORD(this.memory[this.sp[0] + 1], this.memory[this.sp[0]]);
         this.sp[0] += 2;
+        this.cycles += addcycles;
     }
     sub(a, b) {
         const b_ = b ^ 0xff;
@@ -623,12 +624,13 @@ class e8080 {
         this.status.A = ((a & 0x0f) + (b_ & 0x0f) + 1 > 0x0f);
         return result;
     }
-    call(hi, lo) {
+    call(hi, lo, addcycles = 6) {
         const addr = WORD(hi, lo);
         this.sp[0] -= 2;
         this.memory[this.sp[0]] = LO(this.pc[0]);
         this.memory[this.sp[0] + 1] = HI(this.pc[0]);
         this.pc[0] = addr;
+        this.cycles += addcycles;
     }
     setAC(a, b) {
         if ((a & 0x0f) + (b & 0x0f) > 0x0f) {
