@@ -198,6 +198,27 @@ const instructionsDisasm = ["NOP", "LXI B", "STAX B", "INX B", "INR B", "DCR B",
     "RNC", "POP D", "JNC", "OUT", "CNC", "PUSH D", "SUI", "RST 2", "RC", "RET", "JC", "IN", "CC", "CALL", "SBI", "RST 3",
     "RPO", "POP H", "JPO", "XTHL", "CPO", "PUSH H", "ANI", "RST 4", "RPE", "PCHL", "JPE", "XCHG", "CPE", "CALL", "XRI", "RST 5",
     "RP", "POP PSW", "JP", "DI", "CP", "PUSH PSW", "ORI", "RST 6", "RM", "SPHL", "JM", "EI", "CM", "CALL", "CPI", "RST 7"];
+const instructionCycles = [
+    4, 10, 7, 5, 5, 5, 7, 4, 4, 10, 7, 5, 5, 5, 7, 4,
+    4, 10, 7, 5, 5, 5, 7, 4, 4, 10, 7, 5, 5, 5, 7, 4,
+    4, 10, 16, 5, 5, 5, 7, 4, 4, 10, 16, 5, 5, 5, 7, 4,
+    4, 10, 13, 5, 10, 10, 10, 4, 4, 10, 13, 5, 5, 5, 7, 4,
+    5, 5, 5, 5, 5, 5, 7, 5, 5, 5, 5, 5, 5, 5, 7, 5,
+    5, 5, 5, 5, 5, 5, 7, 5, 5, 5, 5, 5, 5, 5, 7, 5,
+    5, 5, 5, 5, 5, 5, 7, 5, 5, 5, 5, 5, 5, 5, 7, 5,
+    7, 7, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 7, 5,
+    4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
+    4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
+    4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
+    4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4, 4, 7, 4,
+    5, 10, 10, 10, 11, 11, 7, 11, 5, 10, 10, 10, 11, 17, 7, 11,
+    5, 10, 10, 10, 11, 11, 7, 11, 5, 10, 10, 10, 11, 17, 7, 11,
+    5, 10, 10, 18, 11, 11, 7, 11, 5, 5, 10, 5, 11, 17, 7, 11,
+    5, 10, 10, 4, 11, 11, 7, 11, 5, 5, 10, 4, 11, 17, 7, 11
+];
+const parityCache = [
+    true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true, true, false, false, true, false, true, true, false, true, false, false, true, false, true, true, false, false, true, true, false, true, false, false, true
+];
 //import { instructionTable, instructionSize } from './instructions';
 const regA = 7;
 class Flags {
@@ -623,14 +644,17 @@ class e8080 {
     setFlags(result) {
         this.status.S = (result & 0b10000000) !== 0;
         this.status.Z = (result & 0xff) === 0;
+        this.status.P = parityCache[result & 0xff];
+        // this.status.C = result & 0b100000000;
+    }
+    parity(result) {
         let parity = 1;
         for (let i = 0; i < 8; i++) {
             if ((result & (1 << i)) !== 0) {
                 parity++;
             }
         }
-        this.status.P = (parity & 1) === 1;
-        // this.status.C = result & 0b100000000;
+        return (parity & 1) === 1;
     }
     getBit(n, bit) {
         return (n & (1 << bit)) === 0 ? 0 : 1;
@@ -674,22 +698,34 @@ class e8080 {
         this.pc[0] = 0;
         this.status.S = this.status.Z = this.status.A = this.status.P = this.status.C = false;
         this.running = true;
+        this.cycles = 0;
     }
     step() {
         if (!this.running) {
             return;
         }
         const opcode = this.memory[this.pc[0]];
+        const arg1 = this.memory[this.pc[0] + 1];
+        const arg2 = this.memory[this.pc[0] + 2];
         const instr = instructionTable[opcode];
         const len = instructionSize[opcode];
-        const args = this.memory.slice(this.pc[0] + 1, this.pc[0] + len);
         this.pc[0] += len;
+        //const args = this.memory.slice(this.pc[0] + 1, this.pc[0] + len);
+        if (len === 1)
+            this.instructionHandlers[instr](opcode);
+        else if (len === 2)
+            this.instructionHandlers[instr](opcode, arg1);
+        else
+            this.instructionHandlers[instr](opcode, arg1, arg2);
+        /*
         if (this.instructionHandlers[instr]) {
             this.instructionHandlers[instr](opcode, ...args);
         }
         else {
             console.log("ERROR: " + instr);
         }
+        */
+        this.cycles += instructionCycles[opcode];
     }
     disasm(addr, num) {
         const opcode = this.memory[addr];
@@ -719,6 +755,7 @@ class e8080 {
 }
 let emulator = new e8080();
 function cpudiag() {
+    document.getElementById('output').innerHTML = '';
     emulator.reset();
     emulator.memory.set([0x76], 0);
     emulator.memory.set([0xc3, 0x06, 0xec], 0x05);
@@ -767,14 +804,26 @@ function step() {
     emulator.step();
     refreshui();
 }
-function run() {
+function anim() {
+    document.querySelectorAll('button').forEach(b => b.disabled = true);
     function fn() {
         step();
         if (emulator.running) {
             setTimeout(fn, 0);
         }
+        else {
+            document.querySelectorAll('button').forEach(b => b.disabled = false);
+        }
     }
     setTimeout(fn, 0);
+}
+function run() {
+    const t0 = (new Date()).getTime();
+    while (emulator.running) {
+        emulator.step();
+    }
+    console.log('CPU halted. Ran ' + emulator.cycles + ' cycles in ' + ((new Date()).getTime() - t0) + ' milliseconds.');
+    refreshui();
 }
 function reset() {
     emulator.reset();
