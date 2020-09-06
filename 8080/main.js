@@ -701,6 +701,7 @@ class e8080 {
         this.status.S = this.status.Z = this.status.A = this.status.P = this.status.C = false;
         this.running = true;
         this.cycles = 0;
+        this.instructions = 0;
     }
     step() {
         if (!this.running) {
@@ -728,6 +729,7 @@ class e8080 {
         }
         */
         this.cycles += instructionCycles[opcode];
+        this.instructions++;
     }
     disasm(addr, num) {
         const opcode = this.memory[addr];
@@ -851,6 +853,7 @@ function refreshui() {
     document.getElementById('flags').innerHTML = "S:" + (+emulator.status.S) + " Z:" + (+emulator.status.Z) + " A:" + (+emulator.status.A) + " P:" + (+emulator.status.P) + " C:" + (+emulator.status.C);
     //JSON.stringify(emulator.status).replace(/["{}]/g,'').replace(/,/g,' ');
     document.getElementById('cycles').innerHTML = emulator.cycles.toString();
+    document.getElementById('instructions').innerHTML = emulator.instructions.toString();
 }
 function displayChar(ch) {
     const str = String.fromCharCode(ch);
