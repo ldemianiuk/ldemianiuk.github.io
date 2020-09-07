@@ -71,34 +71,50 @@ div#memory {
     white-space: nowrap;
 }
 
+@font-face {
+    font-family: 'VT323';
+    src: url('VT323-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'DEC Terminal';
+    src: url('DECTERM.ttf') format('truetype');
+}
+
 #output {
+    /* font-family: 'DEC Terminal'; */
+    font-family: 'VT323';
+    font-size: 150%;
     width: 80ch;
     border-style: solid;
     min-height: 1em;
-    font-size: 150%;
     line-height: 1em;
     height: 20em;
     overflow: auto;
-    background: #3e32a2;
-    color: #d6cef4;
+    /* background: #3e32a2;
+    color: #d6cef4; */
+    background: #151617;
+    color: #33ff33;
+
 }
 
-#output::-webkit-scrollbar {
-    width: 12px;               /* width of the entire scrollbar */
+/* #output::-webkit-scrollbar {
+    width: 12px;               
   }
   #output::-webkit-scrollbar-track {
-    background: #7c71da;        /* color of the tracking area */
+    background: #7c71da;        
   }
   #output::-webkit-scrollbar-thumb {
-    background-color: orange;    /* color of the scroll thumb */
-    border-radius: 10px;       /* roundness of the scroll thumb */
-    border: 3px solid #7c71da;  /* creates padding around scroll thumb */
-  }
+    background-color: orange;    
+    border-radius: 10px;       
+    border: 3px solid #7c71da;  
+  } */
 
 #output:focus {
-    outline-width: 5px;
+    outline-width: 3px;
     outline-style: outset;
-    outline-color: #7c71da;
+    /* outline-color: #7c71da; */
+    outline-color: rgb(137, 141, 146);
 }
 
 div#flags {
@@ -129,7 +145,7 @@ div#instructions {
     background-color: transparent;
   }
   50% {
-    background-color: #d6cef4;
+    background-color: #33ff33;
   }
 }
 
@@ -138,7 +154,7 @@ div#instructions {
     background-color: transparent;
   }
   50% {
-    background-color: #d6cef4;
+    background-color: #33ff33;
   }
 }
 
@@ -147,7 +163,7 @@ div#instructions {
     background-color: transparent;
   }
   50% {
-    background-color: #d6cef4;
+    background-color: #33ff33;
   }
 }
 
@@ -156,7 +172,7 @@ div#instructions {
     background-color: transparent;
   }
   50% {
-    background-color: #d6cef4;
+    background-color: #33ff33;
   }
 }
 
@@ -165,7 +181,7 @@ div#instructions {
     background-color: transparent;
   }
   50% {
-    background-color: #d6cef4;
+    background-color: #33ff33;
   }
 }
 

@@ -850,6 +850,7 @@ function run(speed) {
     function fn() {
         for (let i = 0; i < speed; i++)
             emulator.step();
+        refreshui();
         if (emulator.running) {
             runtimer = setTimeout(fn, 0);
         }
@@ -933,7 +934,10 @@ function keydown(ev) {
         ev.preventDefault();
         ev.stopPropagation();
     }
-    if (ev.ctrlKey) {
+    else if (ev.keyCode === 27) {
+        document.getElementById('output').blur();
+    }
+    else if (ev.ctrlKey && ev.keyCode) {
         emulator.input.push(ev.keyCode & 0b00111111);
         ev.preventDefault();
         ev.stopPropagation();
