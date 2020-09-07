@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <script src="main.js"></script>
+    <script src="main.js" charset="utf-8"></script>
     <link rel="stylesheet" href="index.css">
 </head>
 
@@ -25,9 +25,9 @@
             </ul>
         </div>
         <div style="margin-left: 10px">
-            <h2>Output</h2>
-            <div id="output">
-            </div>
+            <h2>Terminal</h2>
+            <pre id="output" tabindex="0" onkeydown="keydown(event)" onkeypress="keypress(event)">
+            </pre>
             <div style="display: flex; flex-direction: row;">
                 <div>
                     <h2>Registers</h2>
@@ -62,10 +62,10 @@
                     <h2>Cycles</h2>
                     <div id='cycles'>0</div>
                 </div>
-                <div style="margin-left: 20px">
+                <!-- <div style="margin-left: 20px">
                     <h2>Instructions</h2>
                     <div id='instructions'>0</div>
-                </div>
+                </div> -->
             </div>
 
             <div style="display: flex; flex-direction: row;">
