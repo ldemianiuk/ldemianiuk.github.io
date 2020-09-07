@@ -783,6 +783,7 @@ class e8080 {
     }
 }
 let emulator = new e8080();
+let runtimer;
 function cpudiag() {
     document.getElementById('output').innerHTML = '';
     emulator.reset();
@@ -794,6 +795,9 @@ function cpudiag() {
     refreshui();
 }
 function basic() {
+    clearTimeout(runtimer);
+    runtimer = null;
+    document.getElementById('output').innerHTML = '';
     emulator.reset();
     emulator.memory.set(tinybas);
     refreshui();
@@ -838,35 +842,39 @@ function step() {
     emulator.step();
     refreshui();
 }
-function run() {
-    document.querySelectorAll('button').forEach(b => b.disabled = true);
+function run(speed) {
+    if (runtimer)
+        return;
+    //document.querySelectorAll('button').forEach(b => b.disabled = true);
     document.getElementById('output').focus();
     function fn() {
-        for (let i = 0; i < 100; i++)
+        for (let i = 0; i < speed; i++)
             emulator.step();
         if (emulator.running) {
-            setTimeout(fn, 0);
+            runtimer = setTimeout(fn, 0);
         }
         else {
             document.querySelectorAll('button').forEach(b => b.disabled = false);
         }
     }
-    setTimeout(fn, 0);
+    fn();
 }
 function anim() {
-    document.querySelectorAll('button').forEach(b => b.disabled = true);
+    if (runtimer)
+        return;
+    //document.querySelectorAll('button').forEach(b => b.disabled = true);
     document.getElementById('output').focus();
     function fn() {
         emulator.step();
         refreshui();
         if (emulator.running) {
-            setTimeout(fn, 0);
+            runtimer = setTimeout(fn, 0);
         }
         else {
             document.querySelectorAll('button').forEach(b => b.disabled = false);
         }
     }
-    setTimeout(fn, 0);
+    fn();
 }
 /*
 function run(): void {
@@ -897,8 +905,9 @@ function refreshui() {
     }
     document.getElementById('stack').innerHTML = stackwords.join('');
     const page = Number(document.getElementById('page').value);
-    document.getElementById('memory').innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp; 0123456789ABCDEF<br>' +
-        Array.from(Array(16).keys()).map(i => ('0000' + (page * 0x100 + i * 16).toString(16).toUpperCase()).slice(-4) + ' ' + Array.from(Array(16).keys()).map(j => displayChar(emulator.memory[page * 0x100 + i * 16 + j])).join('')).join('<br>');
+    document.getElementById('memory').innerHTML = '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;00&#8239;01&#8239;02&#8239;03&#8239;04&#8239;05&#8239;06&#8239;07&#8239;08&#8239;09&#8239;0A&#8239;0B&#8239;0C&#8239;0D&#8239;0E&#8239;0F</b><br>' +
+        Array.from(Array(16).keys()).map(i => '<b>' + ('0000' + (page * 0x100 + i * 16).toString(16).toUpperCase()).slice(-4) + '</b> ' + Array.from(Array(16).keys()).map(j => ('00' + (emulator.memory[page * 0x100 + i * 16 + j]).toString(16)).slice(-2)).join('&#8239;') + ' ' +
+            Array.from(Array(16).keys()).map(j => displayChar(emulator.memory[page * 0x100 + i * 16 + j])).join('')).join('<br>');
     document.getElementById('flags').innerHTML = "S:" + (+emulator.status.S) + " Z:" + (+emulator.status.Z) + " A:" + (+emulator.status.A) + " P:" + (+emulator.status.P) + " C:" + (+emulator.status.C);
     //JSON.stringify(emulator.status).replace(/["{}]/g,'').replace(/,/g,' ');
     document.getElementById('cycles').innerHTML = emulator.cycles.toString();
