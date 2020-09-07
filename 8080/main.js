@@ -937,7 +937,7 @@ function keydown(ev) {
     else if (ev.keyCode === 27) {
         document.getElementById('output').blur();
     }
-    else if (ev.ctrlKey && ev.keyCode) {
+    else if (ev.ctrlKey && ev.keyCode !== 17) {
         emulator.input.push(ev.keyCode & 0b00111111);
         ev.preventDefault();
         ev.stopPropagation();

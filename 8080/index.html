@@ -21,7 +21,7 @@
     <div class="content">
         <div>
             <h2>Code</h2>
-            <ul id="code">
+            <ul id="code" class="uibox">
             </ul>
         </div>
         <div style="margin-left: 10px">
@@ -31,7 +31,7 @@
             <div style="display: flex; flex-direction: row;">
                 <div>
                     <h2>Registers</h2>
-                    <table id="registers">
+                    <table id="registers" class="uibox">
                         <tr>
                             <th>B</th>
                             <th>C</th>
@@ -56,11 +56,11 @@
                 </div>
                 <div style="margin-left: 20px">
                     <h2>Flags</h2>
-                    <div id='flags'></div>
+                    <div id='flags' class="uibox"></div>
                 </div>
                 <div style="margin-left: 20px">
                     <h2>Cycles</h2>
-                    <div id='cycles'>0</div>
+                    <div id='cycles' class="uibox">0</div>
                 </div>
                 <!-- <div style="margin-left: 20px">
                     <h2>Instructions</h2>
@@ -74,13 +74,13 @@
                     <h2>Memory</h2>
                     Page: <input id="page" type="number" min="0" max="255" value="1"
                         style="width: 4em; margin-bottom: 10px;" onchange="refreshui()">
-                    <div id="memory">
+                    <div id="memory" class="uibox">
                     </div>
                 </div>
 
                 <div>
                     <h2>Stack</h2>
-                    <ul id="stack">
+                    <ul id="stack" class="uibox">
                     </ul>
                 </div>
             </div>
