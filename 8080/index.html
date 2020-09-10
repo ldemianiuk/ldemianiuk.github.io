@@ -8,13 +8,14 @@
 
 <body>
     <h1><span class="h1">Intel 8080</span></h1>
-    <button onclick="step()">Step</button>
-    <button onclick="run(1)">Animate</button>
-    <button onclick="run(100)">Run</button>
-    <button onclick="basic()">Reset</button>
-    <form style="display: inline" action="#">
+    <button id='step'>Step</button>
+    <button id='animate'>Animate</button>
+    <button id='run'>Run</button>
+    <button id='reset'>Reset</button>
+    <form id='bpform' action="">
     Breakpoint: <input id="breakpoint" type="text">
-    <input type="submit" value="Set" onclick="setbreakpoint()">
+    <input id='setbreakpoint' type="submit" value="Set"">
+    <input id='clearbreakpoint' type="reset" value="Clear">
     </form>
     <!-- <button onclick="selectProgram()">RESET</button> -->
     <!--     Program:
@@ -28,11 +29,11 @@
             <ul id="code" class="uibox">
             </ul>
         </div>
-        <div style="margin-left: 10px">
+        <div>
             <h2>Terminal</h2>
-            <pre id="output" tabindex="0" onkeydown="keydown(event)" onkeypress="keypress(event)">
+            <pre id="output" tabindex="0">
             </pre>
-            <div style="display: flex; flex-direction: row;">
+            <div class="content">
                 <div>
                     <h2>Registers</h2>
                     <table id="registers" class="uibox">
@@ -58,26 +59,25 @@
                         </tr>
                     </table>
                 </div>
-                <div style="margin-left: 20px">
+                <div>
                     <h2>Flags</h2>
                     <div id='flags' class="uibox"></div>
                 </div>
-                <div style="margin-left: 20px">
+                <div>
                     <h2>Cycles</h2>
                     <div id='cycles' class="uibox">0</div>
                 </div>
-                <!-- <div style="margin-left: 20px">
+                <!-- <div>
                     <h2>Instructions</h2>
                     <div id='instructions'>0</div>
                 </div> -->
             </div>
 
-            <div style="display: flex; flex-direction: row;">
+            <div class="content">
 
                 <div>
                     <h2>Memory</h2>
-                    Page: <input id="page" type="number" min="0" max="255" value="1"
-                        style="width: 4em; margin-bottom: 10px;" onchange="refreshui()">
+                    Page: <input id="page" type="number" min="0" max="255" value="1">
                     <div id="memory" class="uibox">
                     </div>
                 </div>
