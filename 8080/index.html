@@ -12,11 +12,6 @@
     <button id='animate'>Animate</button>
     <button id='run'>Run</button>
     <button id='reset'>Reset</button>
-    <form id='bpform' action="">
-        Breakpoint: <input id="breakpoint" type="text">
-        <input id='setbreakpoint' type="submit" value="Set"">
-    <input id='clearbreakpoint' type=" reset" value="Clear">
-    </form>
     <!-- <button onclick="selectProgram()">RESET</button> -->
     <!--     Program:
     <select name="program" id="program" onchange="selectProgram()">
@@ -33,19 +28,29 @@
             <div class="content">
                 <div>
                     <h2>Terminal</h2>
-                    <pre id="output" tabindex="0">
-            </pre>
+                    <pre id="output" tabindex="0"></pre>
                 </div>
                 <div>
+                    <h2>Breakpoints</h2>
+                    <form id='bpform' action="">
+                         <input id="breakpoint" type="text" size="6">
+                        <input id='setbreakpoint' type="submit" value="Add">
+                        <input id='removebreakpoint' type="submit" value="Del">
+                        <input id='clearbreakpoint' type="reset" value="Clear">
+                    </form>
+                    <br>
+                    <select id='breakpoints' size="5" style="width: 20ch; overflow: auto">
+                    </select>
+
                     <h2>Load Intel Hex</h2>
                     <button id="load">Load</button>
+                    <input type="file" id="loadfile">
+                    <br>
+                    Sample programs: <select id='programs' style="width: 20ch"></select>
                     <br><br>
-                    <textarea id="loadcode" spellcheck="false">:20010000C398011B417373656D626C656420627920507265747479203830383020417373FE
+                    <textarea id="loadcode" spellcheck="false">:20010000C347011B417373656D626C6564206279205072657474792038303830204173734F
 :20012000656D626C65720D0A687474703A2F2F73656E73692E6F72672F7E73766F2F69386C
-:200140003038302F244C6F6E672062696E61727920696E697469616C697A6174696F6E2057
-:2001600073656374696F6E732063616E20626520646566696E6564207573696E67206261C6
-:20018000736536342D656E636F64656420737472696E6773210D0A241104010E09CD050099
-:1401A000CDAC010E09114501CD0500C93E21763DC2AE01C97C
+:100140003038302F0D0A241104010E09CD05007638
 :00000001FF</textarea>
                 </div>
             </div>
